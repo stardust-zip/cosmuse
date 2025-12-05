@@ -1,9 +1,6 @@
 import Database from "better-sqlite3";
 const db = new Database("cosmuse.db");
 
-// WAL mode is generally safer and faster for concurrency.
-// db.pragma("journa;_mode = WAL");
-
 const createChapterTable = `
   CREATE TABLE IF NOT EXISTS chapters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

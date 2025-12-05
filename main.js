@@ -4,10 +4,6 @@ import db from "./db.js";
 const host = "127.0.0.1";
 const port = "8282";
 
-const query = db.prepare("SELECT * FROM chapters");
-const chapters = query.all();
-console.log(chapters);
-
 const server = http.createServer((req, res) => {
   switch (req.method) {
     case "GET":
@@ -22,11 +18,14 @@ const server = http.createServer((req, res) => {
       } else if (req.url === "/chapters") {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
+        const chapters = db.prepare("SELECT * FROM chapters").all();
         res.end(JSON.stringify(chapters, null, 2));
       } else if (req.url.startsWith("/chapter/")) {
         const url_splitted = req.url.split("/");
         const targetId = parseInt(url_splitted[url_splitted.length - 1]);
-        const chapter = chapters.find((c) => c.id === targetId);
+        const chapter = db
+          .prepare("SELECT * FROM chapters WHERE id = ?")
+          .get(targetId);
 
         if (!chapter) {
           res.statusCode = 404;
@@ -55,17 +54,18 @@ const server = http.createServer((req, res) => {
         req.on("end", () => {
           try {
             const data = JSON.parse(body);
-            const newId =
-              chapters.length > 0 ? chapters[chapters.length - 1].id + 1 : 1;
-            const chapter = {
-              id: newId,
-              title: data.title,
-              wordCount: data.wordCount,
-            };
-            chapters.push(chapter);
+            const info = db
+              .prepare("INSERT INTO chapters (title, wordCount) VALUES (?, ?)")
+              .run(data.title, data.wordCount);
             res.statusCode = 201;
             res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify(chapter));
+            res.end(
+              JSON.stringify({
+                id: info.lastInsertRowid,
+                title: data.title,
+                wordCount: data.wordCount,
+              }),
+            );
           } catch (err) {
             console.log("Error while parsing JSON: ", err);
             res.statusCode = 404;
@@ -73,6 +73,60 @@ const server = http.createServer((req, res) => {
             res.end(JSON.stringify({ error: "Failed to parse JSON" }));
           }
         });
+      }
+      break;
+    case "PUT":
+      if (req.url.startsWith("/chapter/")) {
+        let body = "";
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+
+        req.on("end", () => {
+          const data = JSON.parse(body);
+
+          const url_splitted = req.url.split("/");
+          const targetId = parseInt(url_splitted[url_splitted.length - 1]);
+
+          const info = db
+            .prepare(
+              "UPDATE chapters SET title = ?, wordCount = ? Where id = ?",
+            )
+            .run(data.title, data.wordCount, targetId);
+
+          if (info.changes == 1) {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(info));
+          } else {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ message: "update failed" }));
+          }
+        });
+      }
+      break;
+    case "DELETE":
+      if (req.url.startsWith("/chapter/")) {
+        const url_splitted = req.url.split("/");
+        const targetId = parseInt(url_splitted[url_splitted.length - 1]);
+
+        const info = db
+          .prepare("DELETE FROM chapters WHERE id = ?")
+          .run(targetId);
+        if (info.changes == 1) {
+          res.statusCode = 204;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(info));
+        } else {
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ message: "delete failed" }));
+        }
+      } else {
+        res.statusCode = 405;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ message: "Method not allowed" }));
       }
       break;
     default:
