@@ -1,34 +1,12 @@
 import http from "node:http";
+import db from "./db.js";
 
 const host = "127.0.0.1";
 const port = "8282";
-const chapters = [
-  {
-    id: 1,
-    title: "Pillar of the World",
-    wordCount: 10231,
-  },
-  {
-    id: 2,
-    title: "The Edge of Sunlight",
-    wordCount: 10231,
-  },
-  {
-    id: 3,
-    title: "Whisper of Snow",
-    wordCount: 10231,
-  },
-  {
-    id: 4,
-    title: "Wind of the West",
-    wordCount: 10231,
-  },
-  {
-    id: 5,
-    title: "The Jewel of Tommorrow",
-    wordCount: 10231,
-  },
-];
+
+const query = db.prepare("SELECT * FROM chapters");
+const chapters = query.all();
+console.log(chapters);
 
 const server = http.createServer((req, res) => {
   switch (req.method) {
@@ -72,7 +50,6 @@ const server = http.createServer((req, res) => {
         req.on("data", (chunk) => {
           // 'chunk' is a Buffer (binary data).
           body += chunk.toString();
-          console.log(body);
         });
 
         req.on("end", () => {
@@ -86,7 +63,6 @@ const server = http.createServer((req, res) => {
               wordCount: data.wordCount,
             };
             chapters.push(chapter);
-            console.log(chapters);
             res.statusCode = 201;
             res.setHeader("Content-Type", "application/json");
             res.end(JSON.stringify(chapter));
