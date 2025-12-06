@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <body>
+        <h1>Cosmuse Reader</h1>
+        <div id="app">Loading...</div>
+
+        <script>
+            // 1. We ask the backend for data
+            fetch("http://127.0.0.1:8281/chapters")
+                .then((response) => response.json())
+                .then((data) => {
+                    // 2. We put the data on the screen
+                    document.getElementById("app").innerText = JSON.stringify(
+                        data,
+                        null,
+                        2,
+                    );
+                })
+                .catch((err) => {
+                    // 3. If it fails (CORS), we show the error
+                    console.error(err);
+                    document.getElementById("app").innerText =
+                        "Connection Failed! Check Console (F12).";
+                });
+        </script>
+    </body>
+</html>

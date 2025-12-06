@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-const db = new Database("cosmuse.db");
+const db = new Database("cosmuse_legacy.db");
 
 const createChapterTable = `
   CREATE TABLE IF NOT EXISTS chapters (

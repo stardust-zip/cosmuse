@@ -2,9 +2,22 @@ import http from "node:http";
 import db from "./db.js";
 
 const host = "127.0.0.1";
-const port = "8282";
+const port = "8281";
 
 const server = http.createServer((req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS",
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.statusCode = 204;
+    res.end();
+    return;
+  }
+
   switch (req.method) {
     case "GET":
       if (req.url === "/") {
@@ -115,8 +128,6 @@ const server = http.createServer((req, res) => {
           .prepare("DELETE FROM chapters WHERE id = ?")
           .run(targetId);
         if (info.changes == 1) {
-          res.statusCode = 204;
-          res.setHeader("Content-Type", "application/json");
           res.end(JSON.stringify(info));
         } else {
           res.statusCode = 400;
