@@ -3,11 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 const isTest = process.env.NODE_ENV === "test";
-const dbLocation = isTest ? ":memory:" : path.join(__dirname, "../cosmuse.db");
+const dbLocation = isTest
+  ? ":memory:"
+  : path.join(import.meta.dirname, "../cosmuse.db");
 
 const db = new Database(dbLocation);
 
-const sqlPath = path.join(__dirname, "sql", "create_tables.sql");
+const sqlPath = path.join(import.meta.dirname, "sql", "create_tables.sql");
 
 const createTable = fs.readFileSync(sqlPath, "utf-8");
 

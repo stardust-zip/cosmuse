@@ -28,22 +28,12 @@ const createPost = (req, res) => {
     return res.status(400).json({ error: "Title is required." });
   }
 
-  const title = req.body.title;
-  const content = req.body.content;
+  const newPost = postService.createPost(req.body.title, req.body.content);
 
-  const info = postService.createPost(title, content);
-
-  if (info.changes === 1) {
-    res.status(201).json({
-      id: info.lastInsertRowid,
-      title: title,
-      content: content,
-    });
-  } else {
-    res.status(400).json({
-      message: "Failed.",
-    });
+  if (!newPost) {
+    return res.json(400).json({ error: "Failed to create post." });
   }
+  res.status(201).json(newPost);
 };
 
 // PUT
@@ -55,30 +45,26 @@ const updatePost = (req, res) => {
   ) {
     return res.status(400).json({ error: "Title is required" });
   }
-  const title = req.body.title;
-  const content = req.body.content;
 
-  const info = postService.updatePost(title, content, req.params.id);
+  const updatedPost = postService.updatePost(
+    req.body.title,
+    req.body.content,
+    req.params.id,
+  );
 
-  if (info.changes === 1) {
-    res.status(200).json({
-      id: req.params.id,
-      title: title,
-      content: content,
-    });
-  } else {
-    res.status(404).json({
-      message: "ID not exists",
-    });
+  if (!updatedPost) {
+    return res.status(404).json({ message: "Not found!" });
   }
+
+  res.status(200).json({ message: "Update sucess!" });
 };
 
 // DELETE
 const deletePost = (req, res) => {
-  const info = postService.deletePost(req.params.id);
+  const deleted = postService.deletePost(req.params.id);
 
-  if (info.changes === 1) {
-    res.status(204).json({ mesage: "sucess" });
+  if (deleted) {
+    res.status(204).json(deleted);
   } else {
     res.status(404).json({ message: "Not found." });
   }

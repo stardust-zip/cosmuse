@@ -15,7 +15,13 @@ export const createPost = (title, content) => {
     .prepare("INSERT INTO posts (title, content) VALUES (?, ?)")
     .run(title, content);
 
-  return info;
+  if (info.changes === 0) return null;
+
+  return {
+    id: info.lastInsertRowid,
+    title,
+    content,
+  };
 };
 
 export const updatePost = (title, content, id) => {
@@ -23,11 +29,15 @@ export const updatePost = (title, content, id) => {
     .prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?")
     .run(title, content, id);
 
-  return info;
+  if (info === 0) return null;
+
+  return { id, title, content };
 };
 
 export const deletePost = (id) => {
   const info = db.prepare("DELETE FROM posts WHERE id = ?").run(id);
 
-  return info;
+  if (info.changes === 0) return null;
+
+  return { message: "delete sucess" };
 };
