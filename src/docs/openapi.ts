@@ -14,6 +14,7 @@ export const registry = new OpenAPIRegistry();
 
 registry.registerPath({
   method: "get",
+  tags: ["Posts"],
   path: "/posts",
   description: "Get all posts.",
   summary: "get all posts",
@@ -31,6 +32,7 @@ registry.registerPath({
 
 registry.registerPath({
   method: "get",
+  tags: ["Posts"],
   path: "/posts/{id}",
   description: "Get a post by it's id",
   summary: "Get post by id",
@@ -55,6 +57,7 @@ registry.registerPath({
 registry.register("Post", createPostSchema);
 registry.registerPath({
   method: "post",
+  tags: ["Posts"],
   path: "/posts",
   description: "Create a new blog post",
   summary: "Create Post",
@@ -85,6 +88,7 @@ registry.registerPath({
 registry.register("Put", updatePostSchema);
 registry.registerPath({
   method: "put",
+  tags: ["Posts"],
   path: "/posts/{id}",
   description: "update a post based on id",
   summary: "Update Post",
@@ -115,6 +119,7 @@ registry.registerPath({
 
 registry.registerPath({
   method: "delete",
+  tags: ["Posts"],
   path: "/posts/{id}",
   description: "Delete a post based on the id.",
   summary: "Delete Post",
