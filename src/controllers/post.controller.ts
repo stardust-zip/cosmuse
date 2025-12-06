@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as postService from "../services/post.service";
+import * as postSchema from "../schemas/post.schema";
 
 // GET
 const getAllPosts = async (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ const getAllPosts = async (req: Request, res: Response) => {
 };
 
 const getPostById = async (req: Request, res: Response) => {
-  const post = await postService.getPostById(req.params.id);
+  const post = await postService.getPostById(Number(req.params.id));
 
   if (!post) {
     return res.status(404).json({ error: "Not found." });
@@ -21,11 +22,8 @@ const getPostById = async (req: Request, res: Response) => {
 
 // POST
 const createPost = async (req: Request, res: Response) => {
-  if (
-    !req.body.title ||
-    typeof req.body.title != "string" ||
-    req.body.title === ""
-  ) {
+  const result = postSchema.createPostSchema.safeParse(req.body);
+  if (!result.success) {
     return res.status(400).json({ error: "Title is required." });
   }
 
@@ -42,18 +40,16 @@ const createPost = async (req: Request, res: Response) => {
 
 // PUT
 const updatePost = async (req: Request, res: Response) => {
-  if (
-    !req.body.title ||
-    typeof req.body.title != "string" ||
-    req.body.title === ""
-  ) {
+  const result = postSchema.updatePostSchema.safeParse(req.body);
+
+  if (!result.success) {
     return res.status(400).json({ error: "Title is required" });
   }
 
   const updatedPost = await postService.updatePost(
     req.body.title,
     req.body.content,
-    req.params.id,
+    Number(req.params.id),
   );
 
   if (!updatedPost) {
@@ -65,7 +61,7 @@ const updatePost = async (req: Request, res: Response) => {
 
 // DELETE
 const deletePost = async (req: Request, res: Response) => {
-  const deleted = await postService.deletePost(req.params.id);
+  const deleted = await postService.deletePost(Number(req.params.id));
 
   if (deleted) {
     res.status(204).send();
