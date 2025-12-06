@@ -2,9 +2,13 @@ import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 
-const db = new Database("cosmuse.db");
+// Get the direcotry of the current file (src/)
+const __dirname = import.meta.dirname;
 
-const sqlPath = path.join(process.cwd(), "sql", "create_tables.sql");
+const dbPath = path.join(__dirname, "cosmuse.db");
+const db = new Database(dbPath);
+
+const sqlPath = path.join(__dirname, "sql", "create_tables.sql");
 
 const createTable = fs.readFileSync(sqlPath, "utf-8");
 
