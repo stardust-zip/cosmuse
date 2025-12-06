@@ -147,3 +147,7 @@ dist
 
 # Nix
 .direnv/
+
+/src/generated/prisma
+
+/src/generated/prisma

@@ -31,7 +31,7 @@ const createPost = (req, res) => {
   const newPost = postService.createPost(req.body.title, req.body.content);
 
   if (!newPost) {
-    return res.json(400).json({ error: "Failed to create post." });
+    return res.status(400).json({ error: "Failed to create post." });
   }
   res.status(201).json(newPost);
 };
@@ -64,7 +64,7 @@ const deletePost = (req, res) => {
   const deleted = postService.deletePost(req.params.id);
 
   if (deleted) {
-    res.status(204).json(deleted);
+    res.status(204).send();
   } else {
     res.status(404).json({ message: "Not found." });
   }

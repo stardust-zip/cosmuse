@@ -30,7 +30,7 @@ describe("POST /posts", () => {
     expect(check.body.content).toBe(res.body.content);
   });
 
-  it("should fail to creat a new post without tile", async () => {
+  it("should fail to creat a new post without title", async () => {
     const newPost = {
       content: "New Content without Title.",
     };

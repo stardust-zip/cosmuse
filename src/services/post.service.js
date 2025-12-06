@@ -1,4 +1,5 @@
 import db from "../database.js";
+import { prisma } from "../prisma.js";
 
 export const getAllPosts = () => {
   const posts = db.prepare("SELECT * FROM posts").all();
@@ -29,7 +30,7 @@ export const updatePost = (title, content, id) => {
     .prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?")
     .run(title, content, id);
 
-  if (info === 0) return null;
+  if (info.changes === 0) return null;
 
   return { id, title, content };
 };
