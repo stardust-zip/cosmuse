@@ -1,6 +1,18 @@
-import { describe, it, expect, beforAll } from "vitest";
+import { describe, it, expect, beforAll, beforeAll } from "vitest";
 import request from "supertest";
 import app from "../src/app.js";
+import { prisma } from "../src/prisma.js";
+
+beforeAll(async () => {
+  await prisma.post.deleteMany();
+  await prisma.post.create({
+    data: {
+      id: 1,
+      title: "Test Post",
+      content: "Test Content",
+    },
+  });
+});
 
 describe("GET /posts", () => {
   it("should return a list of all posts", async () => {

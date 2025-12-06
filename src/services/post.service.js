@@ -1,44 +1,40 @@
 import db from "../database.js";
 import { prisma } from "../prisma.js";
 
-export const getAllPosts = () => {
-  const posts = db.prepare("SELECT * FROM posts").all();
-  return posts;
+export const getAllPosts = async () => {
+  return await prisma.post.findMany();
 };
 
-export const getPostById = (id) => {
-  const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(id);
-  return post;
+export const getPostById = async (id) => {
+  return await prisma.post.findUnique({ where: { id: Number(id) } });
 };
 
-export const createPost = (title, content) => {
-  const info = db
-    .prepare("INSERT INTO posts (title, content) VALUES (?, ?)")
-    .run(title, content);
-
-  if (info.changes === 0) return null;
-
-  return {
-    id: info.lastInsertRowid,
-    title,
-    content,
-  };
+export const createPost = async (title, content) => {
+  return await prisma.post.create({
+    data: {
+      title,
+      content,
+    },
+  });
 };
 
-export const updatePost = (title, content, id) => {
-  const info = db
-    .prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?")
-    .run(title, content, id);
-
-  if (info.changes === 0) return null;
-
-  return { id, title, content };
+export const updatePost = async (title, content, id) => {
+  try {
+    return await prisma.post.update({
+      where: { id: Number(id) },
+      data: { title, content },
+    });
+  } catch (err) {
+    return null;
+  }
 };
 
-export const deletePost = (id) => {
-  const info = db.prepare("DELETE FROM posts WHERE id = ?").run(id);
-
-  if (info.changes === 0) return null;
-
-  return { message: "delete sucess" };
+export const deletePost = async (id) => {
+  try {
+    return await prisma.post.delete({
+      where: { id: Number(id) },
+    });
+  } catch (err) {
+    return null;
+  }
 };

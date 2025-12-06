@@ -1,16 +1,16 @@
 import * as postService from "../services/post.service.js";
 
 // GET
-const getAllPosts = (req, res) => {
-  const posts = postService.getAllPosts();
+const getAllPosts = async (req, res) => {
+  const posts = await postService.getAllPosts();
   if (!posts) {
     return res.status(404).json({ error: "Not found." });
   }
   res.status(200).json(posts);
 };
 
-const getPostById = (req, res) => {
-  const post = postService.getPostById(req.params.id);
+const getPostById = async (req, res) => {
+  const post = await postService.getPostById(req.params.id);
 
   if (!post) {
     return res.status(404).json({ error: "Not found." });
@@ -19,7 +19,7 @@ const getPostById = (req, res) => {
 };
 
 // POST
-const createPost = (req, res) => {
+const createPost = async (req, res) => {
   if (
     !req.body.title ||
     typeof req.body.title != "string" ||
@@ -28,7 +28,10 @@ const createPost = (req, res) => {
     return res.status(400).json({ error: "Title is required." });
   }
 
-  const newPost = postService.createPost(req.body.title, req.body.content);
+  const newPost = await postService.createPost(
+    req.body.title,
+    req.body.content,
+  );
 
   if (!newPost) {
     return res.status(400).json({ error: "Failed to create post." });
@@ -37,7 +40,7 @@ const createPost = (req, res) => {
 };
 
 // PUT
-const updatePost = (req, res) => {
+const updatePost = async (req, res) => {
   if (
     !req.body.title ||
     typeof req.body.title != "string" ||
@@ -46,7 +49,7 @@ const updatePost = (req, res) => {
     return res.status(400).json({ error: "Title is required" });
   }
 
-  const updatedPost = postService.updatePost(
+  const updatedPost = await postService.updatePost(
     req.body.title,
     req.body.content,
     req.params.id,
@@ -60,8 +63,8 @@ const updatePost = (req, res) => {
 };
 
 // DELETE
-const deletePost = (req, res) => {
-  const deleted = postService.deletePost(req.params.id);
+const deletePost = async (req, res) => {
+  const deleted = await postService.deletePost(req.params.id);
 
   if (deleted) {
     res.status(204).send();
