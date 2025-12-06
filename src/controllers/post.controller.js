@@ -3,6 +3,9 @@ import db from "../database.js";
 // GET
 const getAllPosts = (req, res) => {
   const posts = db.prepare("SELECT * FROM posts").all();
+  if (!posts) {
+    return res.status(404).json({ error: "Not found." });
+  }
   res.status(200).json(posts);
 };
 
@@ -10,6 +13,10 @@ const getPostById = (req, res) => {
   const post = db
     .prepare("SELECT * FROM posts WHERE id = ?")
     .get(req.params.id);
+
+  if (!post) {
+    return res.status(404).json({ error: "Not found." });
+  }
   res.status(200).json(post);
 };
 

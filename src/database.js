@@ -2,11 +2,10 @@ import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 
-// Get the direcotry of the current file (src/)
-const __dirname = import.meta.dirname;
+const isTest = process.env.NODE_ENV === "test";
+const dbLocation = isTest ? ":memory:" : path.join(__dirname, "../cosmuse.db");
 
-const dbPath = path.join(__dirname, "cosmuse.db");
-const db = new Database(dbPath);
+const db = new Database(dbLocation);
 
 const sqlPath = path.join(__dirname, "sql", "create_tables.sql");
 
@@ -14,7 +13,15 @@ const createTable = fs.readFileSync(sqlPath, "utf-8");
 
 db.exec(createTable);
 
-if (
+if (isTest) {
+  const title = "Test Post";
+  const content = "Test Content";
+
+  db.prepare("INSERT INTO posts (title, content) VALUES (?, ?)").run(
+    title,
+    content,
+  );
+} else if (
   db.prepare("SELECT EXISTS (SELECT 1 FROM posts) as val").pluck(true).get() ===
   0
 ) {

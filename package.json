@@ -4,6 +4,7 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "supertest": "^7.1.4",
     "vitest": "^4.0.15"
   }
