@@ -1,8 +1,8 @@
-import db from "../database.js";
+import * as postService from "../services/post.service.js";
 
 // GET
 const getAllPosts = (req, res) => {
-  const posts = db.prepare("SELECT * FROM posts").all();
+  const posts = postService.getAllPosts();
   if (!posts) {
     return res.status(404).json({ error: "Not found." });
   }
@@ -10,9 +10,7 @@ const getAllPosts = (req, res) => {
 };
 
 const getPostById = (req, res) => {
-  const post = db
-    .prepare("SELECT * FROM posts WHERE id = ?")
-    .get(req.params.id);
+  const post = postService.getPostById(req.params.id);
 
   if (!post) {
     return res.status(404).json({ error: "Not found." });
@@ -33,9 +31,7 @@ const createPost = (req, res) => {
   const title = req.body.title;
   const content = req.body.content;
 
-  const info = db
-    .prepare("INSERT INTO posts (title, content) VALUES (?, ?)")
-    .run(title, content);
+  const info = postService.createPost(title, content);
 
   if (info.changes === 1) {
     res.status(201).json({
@@ -62,9 +58,7 @@ const updatePost = (req, res) => {
   const title = req.body.title;
   const content = req.body.content;
 
-  const info = db
-    .prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?")
-    .run(title, content, req.params.id);
+  const info = postService.updatePost(title, content, req.params.id);
 
   if (info.changes === 1) {
     res.status(200).json({
@@ -81,7 +75,7 @@ const updatePost = (req, res) => {
 
 // DELETE
 const deletePost = (req, res) => {
-  const info = db.prepare("DELETE FROM posts WHERE id = ?").run(req.params.id);
+  const info = postService.deletePost(req.params.id);
 
   if (info.changes === 1) {
     res.status(204).json({ mesage: "sucess" });
