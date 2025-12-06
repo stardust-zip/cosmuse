@@ -1,4 +1,4 @@
-import { describe, it, expect, beforAll, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
 import request from "supertest";
 import app from "../src/app.js";
 import { prisma } from "../src/prisma.js";
