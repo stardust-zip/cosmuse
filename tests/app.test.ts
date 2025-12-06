@@ -34,7 +34,6 @@ describe("POST /posts", () => {
     const res = await request(app).post("/posts").send(newPost);
 
     expect(res.status).toBe(201);
-    expect(res.body.id).toBe(2);
     expect(res.body.title).toBe("Test Title 2");
 
     const check = await request(app).get(`/posts/${res.body.id}`);

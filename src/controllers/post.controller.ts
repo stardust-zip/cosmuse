@@ -1,7 +1,8 @@
-import * as postService from "../services/post.service.js";
+import { Request, Response } from "express";
+import * as postService from "../services/post.service";
 
 // GET
-const getAllPosts = async (req, res) => {
+const getAllPosts = async (req: Request, res: Response) => {
   const posts = await postService.getAllPosts();
   if (!posts) {
     return res.status(404).json({ error: "Not found." });
@@ -9,7 +10,7 @@ const getAllPosts = async (req, res) => {
   res.status(200).json(posts);
 };
 
-const getPostById = async (req, res) => {
+const getPostById = async (req: Request, res: Response) => {
   const post = await postService.getPostById(req.params.id);
 
   if (!post) {
@@ -19,7 +20,7 @@ const getPostById = async (req, res) => {
 };
 
 // POST
-const createPost = async (req, res) => {
+const createPost = async (req: Request, res: Response) => {
   if (
     !req.body.title ||
     typeof req.body.title != "string" ||
@@ -40,7 +41,7 @@ const createPost = async (req, res) => {
 };
 
 // PUT
-const updatePost = async (req, res) => {
+const updatePost = async (req: Request, res: Response) => {
   if (
     !req.body.title ||
     typeof req.body.title != "string" ||
@@ -63,7 +64,7 @@ const updatePost = async (req, res) => {
 };
 
 // DELETE
-const deletePost = async (req, res) => {
+const deletePost = async (req: Request, res: Response) => {
   const deleted = await postService.deletePost(req.params.id);
 
   if (deleted) {

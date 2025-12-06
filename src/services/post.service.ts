@@ -1,4 +1,3 @@
-import db from "../database.js";
 import { prisma } from "../prisma.js";
 
 export const getAllPosts = async () => {
